@@ -1,0 +1,415 @@
+package mincensus;
+import java.util.*;
+
+import java.io.*;
+
+class LinkedList
+{
+	census head;
+	static class census
+	{
+		String village;
+		int houseno;
+		int num;
+		String name[]=new String[10];
+		int age[]=new int[10];
+		String gender[]=new String[10];
+		census next;
+		
+		census(String vil,int hn,String nm[],int ag[],String gen[],int n )
+		{
+			num=n;
+			village=vil;
+			houseno=hn;
+			for(int i=0;i<n;i++)
+			{
+				name[i]=nm[i];
+				age[i]=ag[i];
+				gender[i]=gen[i];
+			}
+			
+		}
+	}
+	
+}
+
+class Create extends LinkedList
+{
+	Scanner s=new Scanner(System.in);
+  LinkedList insert(LinkedList list)
+	{
+		System.out.println("Enter your village name:");
+		String vil=s.nextLine();
+		System.out.println("Enter the house number");
+		int hn=s.nextInt();
+		System.out.printf("Enter the number of peoples in that house\n");
+		int n=s.nextInt();
+		String nm[]=new String[n];
+		int ag[]=new int[n];
+		String gen[]=new String[n];
+		for(int i=0;i<n;i++)
+		{
+			System.out.println("enter the "+(i+1)+" person name");
+			nm[i]=s.next();
+			System.out.printf("Enter the age\n");
+			ag[i]=s.nextInt();
+			System.out.printf("Enter the gender\n");
+			gen[i]=s.next();		
+		}
+		census node=new census(vil,hn,nm,ag,gen,n );
+		node.next=null;
+		if(list.head==null)
+		{
+			list.head=node;
+		}
+		else
+		{
+           census last=list.head;
+			while(last.next!=null)
+			{
+				last=last.next;
+			}
+			last.next=node;
+		}
+		System.out.println("Deatails saved");
+		return list;
+	}
+		
+}
+
+class Modify extends LinkedList
+{
+	Scanner s=new Scanner(System.in);
+	census cur;
+	LinkedList modi(LinkedList list)
+{
+		int key;
+		census cur=list.head;
+		System.out.println("Enter the house number to modify");
+		key=s.nextInt();
+		while(cur!=null&&cur.houseno!=key)
+		{
+			cur=cur.next;
+		}
+		
+		if(cur==null)
+		{
+				System.out.println("Searched house number not present");	
+		}
+		
+		else if(cur.houseno==key)
+		{
+			System.out.println("Enter your village name:");
+			cur.village=s.next();
+			System.out.printf("Enter the number of peoples in that house\n");
+			cur.num=s.nextInt();
+			for(int i=0;i<cur.num;i++)
+			{
+				System.out.println("enter the "+(i+1)+" person name");
+				cur.name[i]=s.next();
+				System.out.printf("Enter the age\n");
+				cur.age[i]=s.nextInt();
+				System.out.printf("Enter the gender\n");
+				cur.gender[i]=s.next();		
+			}
+		}
+		
+		return list;	
+}
+}
+
+class Delete extends LinkedList
+{
+	Scanner s=new Scanner(System.in);
+	census cur,pre;
+	LinkedList del(LinkedList list)
+	{
+			int key;
+			try {
+			census cur=list.head;
+			System.out.println("Enter the house number to Delete");
+			key=s.nextInt();
+			
+			if(cur.houseno==key)
+			{
+				list.head=cur.next;
+			}
+			else
+			{
+				while(cur!=null&&cur.houseno!=key)
+				{
+					pre=cur;
+					cur=cur.next;
+				}
+				if(cur==null)
+				{
+						System.out.println("Searched house number not present");	
+				}
+				else if(cur.houseno==key)
+				{
+					pre.next=cur.next;
+				}
+				
+			}		
+			}catch(NullPointerException e)
+			{
+					System.out.println("Mini census is empty");	
+			}
+			return list;
+	}
+}
+
+
+class Login 
+{
+Scanner s=new Scanner(System.in);	
+private int pas=1234;
+private int pas1;
+int choice;
+
+LinkedList password(LinkedList list)
+{	
+System.out.println("Enter the admin password to login");
+pas1=s.nextInt();
+if(pas1==pas)
+{
+	System.out.printf("_______________________________\n");
+	System.out.println("***WELCOME TO ADMIN PORTAL***");
+	System.out.printf("_______________________________\n");
+	do
+	{
+		System.out.printf("\n1:Create\n2:Modify\n3:Delete\n4:Logout\n");
+		System.out.println("select your choice:");
+		choice=s.nextInt();
+		switch(choice)
+		{
+		case 1:
+			Create cr=new Create();
+			list=cr.insert(list);
+			break;
+		case 2:
+			Modify m=new Modify();
+			list=m.modi(list);
+		    break;
+		case 3:
+			Delete dl=new Delete();
+			list=dl.del(list);
+			break;
+		case 4:
+			break;
+		default:
+			System.out.println("Enter the valid choice");
+		}
+		
+	}while(choice!=4);
+  }
+else
+{
+	System.out.println("Password not matching");
+}
+return list;
+}
+
+}
+
+class Display  extends LinkedList
+{
+	private int total,lowage,midage,highage;
+	private int numhouse,ml,fm;
+	boolean a,b;
+	
+void disp(LinkedList list)
+{
+	census cur=list.head;
+	System.out.printf("_____________________________________________________\n");
+	System.out.printf("village\t     House no      Names \tAge  Gender\n");
+
+	System.out.printf("_____________________________________________________\n");
+	while(cur!=null)
+	{
+		for(int i=0;i<cur.num;i++)
+		{
+			System.out.printf(cur.village+"\t"+cur.houseno+"\t "+cur.name[i]+" \t"+cur.age[i]+"   "+cur.gender[i]+"\n");
+			if(cur.age[i]<18)
+			{
+				lowage+=1;
+			}
+			else if(cur.age[i]>=18&&cur.age[i]<=65)
+			{
+				midage+=1;
+			}
+			else
+			{
+				highage+=1;
+			}
+			
+			if(a=(cur.gender[i].startsWith("m"))) 
+			{
+				if(a==true)
+				{
+					ml++;
+				}
+			}
+			
+			if(b=(cur.gender[i].startsWith("f")))
+			{
+				 if(b==true)  
+				{
+					fm++;
+				}
+			}
+			
+		}
+		total=total+cur.num;
+		numhouse+=1;
+		cur=cur.next;
+	}
+	System.out.println("*Total number of houses:"+numhouse);
+	System.out.println("*Total number of peoples:"+total);
+	System.out.println("*Number of males:"+ml);
+	System.out.println("*Number of females:"+fm);
+	System.out.println("*Number of peoples below 18 years:"+lowage);
+	System.out.println("*Number of peoples between (18-65) years:"+midage);
+	System.out.println("*Number of peoples above 65 years:"+highage);
+}
+}
+
+
+class search  extends LinkedList
+{
+	Scanner s=new Scanner(System.in);
+	census cur;
+void sear(LinkedList list)
+{
+		int key;
+		census cur=list.head;
+		System.out.println("Enter the house number to search");
+		key=s.nextInt();
+		while(cur!=null&&cur.houseno!=key)
+		{
+			cur=cur.next;
+		}
+		if(cur==null)
+		{
+				System.out.println("Searched house number not present");	
+		}
+		else if(cur.houseno==key)
+		{
+			System.out.printf("_____________________________________________________\n");
+			System.out.printf("village\t     House no      Names \tAge  Gender\n");
+
+			System.out.printf("_____________________________________________________\n");
+			for(int i=0;i<cur.num;i++)
+			{
+				System.out.printf(cur.village+"\t"+cur.houseno+"\t "+cur.name[i]+" \t"+cur.age[i]+"   "+cur.gender[i]+"\n");
+			}
+			
+		}
+}
+
+}
+
+
+interface Scheme
+{
+	Scanner s=new Scanner(System.in);
+	 void below18();
+	void above18();
+}
+
+class myscheme implements Scheme
+{
+	void myage()
+	{
+		int age;
+	   System.out.printf("Enter your age\n");
+	   age=s.nextInt();
+	   if(age<=18)
+	   {
+		   below18();
+	   }
+	   else if(age>18)
+	   {
+		   above18();
+	   }
+	   System.out.printf("***THANK YOU FOR VISTING***\n");
+		
+	}
+	
+	public void below18()
+	{
+		System.out.println("\nGovernement Schemes available under this section are:");
+		System.out.println("1.Beti Bachao Beti Padhao\n"
+				+ "2.Sukanya Samriddhi Yojana\n"
+				+ "3.Balika Samridhi Yojana\n"
+				+ "4.Mukhyamantri Rajshri Yojana\n"
+				+ "5.Mukhyamantri Laadli Yojana\n"
+				+ "6.CBSE Udaan Scheme \n"
+				+ "7.National Scheme of Incentives to Girls for Secondary Education\n"
+				+ "8.Mukhyamantri Kanya Suraksha Yojana\n"
+				+ "9.Mazi Kanya Bhagyashree Scheme\n"
+				+ "10.Nanda Devi Kanya Yojana");
+	}
+	
+	public void above18()
+	{
+		System.out.println("\nGovernement Schemes available under this section are:");
+		System.out.println("1.Pradhan Mantri Jan Dhan Yojna (PMJDY)\n"
+				+ "3.Rajiv Gandhi Jeevandayee Arogya Yojana (RGJAY)\n"
+				+ "4.Pradhan Mantri Jeevan Jyoti Bima Yojna (PMJJBY)\n"
+				+ "5.Rashtriya Swasthya Bima Yojana (RSBY)\n"
+				+ "6.National Social Assistance scheme\n"
+				+ "7.Pradhan Mantri Mudra Yojana (PMMY)\n"
+				+ "8.PM-KISAN (Pradhan Mantri Kisan Samman Nidhi) Scheme\n"
+				+ "9.Pradhan Mantri Kisan Pension Yojana\n"
+				+ "10.Pradhan Mantri Shram Yogi Maan-dhan (PM-SYM)\n"
+				+ "11.Varishtha Pension Bima Yojana (VPBY)\r\n"
+				+ "12.PRIME MINISTER’S SPECIAL SCHOLARSHIP SCHEME – PMSSS");
+	}
+	
+}
+
+
+public class first 
+{
+	public static void main(String[] args) 
+	{
+		int ch=0;
+		LinkedList list=new LinkedList();
+		Scanner s=new Scanner(System.in);
+		System.out.printf("_______________________________\n");
+		System.out.println("***WELCOME TO MINI CENSUS***");
+		System.out.printf("_______________________________\n");
+		do
+		{
+		System.out.printf("\n1:Login\n2:Display\n3:Search\n4:Government schemes\n5:Exit\n");
+		System.out.println("select your choice:");
+		ch=s.nextInt();
+		switch(ch)
+		{
+		case 1:
+			Login lg=new Login();
+			list=lg.password(list);
+		break;
+		case 2:
+			Display ds=new Display();
+			ds.disp(list);
+		break;
+		case 3:
+			search sc=new search();
+			sc.sear(list);
+		break;
+		case 4:
+			myscheme sh=new myscheme();
+			sh.myage();
+			break;
+		case 5:
+			System.out.println("*****THANK YOU*****");
+			break;	
+		default:
+			System.out.println("Enter the valid choice");	
+		}	
+		}while(ch!=5);
+	}
+}
+
